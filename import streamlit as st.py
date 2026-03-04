@@ -16,20 +16,29 @@ st.info(f"🎯 Tentatives restantes : {st.session_state.tentatives}")
 
 # Input du joueur
 if not st.session_state.gagne and not st.session_state.perdu:
-    nombre = st.number_input("Entre un nombre :", min_value=1, max_value=100, step=1)
+    nombre_saisi = st.text_input("Entre un nombre entre 1 et 100 :")
 
     if st.button("✅ Valider"):
-        st.session_state.tentatives -= 1
+        try:
+            nombre = int(nombre_saisi)
 
-        if nombre == st.session_state.nombre_secret:
-            st.session_state.gagne = True
-        elif nombre < st.session_state.nombre_secret:
-            st.warning("📈 C'est **plus grand** !")
-        else:
-            st.warning("📉 C'est **plus petit** !")
+            if nombre < 1 or nombre > 100:
+                st.error("❌ Entre un nombre entre 1 et 100 !")
+            else:
+                st.session_state.tentatives -= 1
 
-        if st.session_state.tentatives == 0 and not st.session_state.gagne:
-            st.session_state.perdu = True
+                if nombre == st.session_state.nombre_secret:
+                    st.session_state.gagne = True
+                elif nombre < st.session_state.nombre_secret:
+                    st.warning("📈 C'est **plus grand** !")
+                else:
+                    st.warning("📉 C'est **plus petit** !")
+
+                if st.session_state.tentatives == 0 and not st.session_state.gagne:
+                    st.session_state.perdu = True
+
+        except ValueError:
+            st.error("❌ Veuillez entrer un nombre valide !")
 
 # Résultat final
 if st.session_state.gagne:
